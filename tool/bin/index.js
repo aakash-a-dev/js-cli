@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import arg from 'arg';
 import chalk from 'chalk';
+import path from 'path';
+import { pkgUp } from 'pkg-up';
 
 try {
     const args = arg({
@@ -9,7 +11,15 @@ try {
     })
     
     if(args['--start']){
-        const pkg = require('./package.json'); 
+        const pkgPath = pkgUp.sync({cwd: process.cwd()});
+        const pkg = require(pkgPath);
+        if (pkg.tool) {
+          console.log('Found configuration', pkg.tool);
+          // TODO: do something with configuration
+        } else {
+          console.log(chalk.yellow('Could not find configuration, using default'));
+          // TODO: get default configuration
+        }
         console.log(chalk.bgCyanBright('starting the app'));
     }
 } catch (error) {
